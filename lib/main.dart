@@ -1,14 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart' ;
+import 'package:flutter/material.dart';
 // import 'package:jitsi_meet/feature_flag/feature_flag_enum.dart'  as prefix;
-import 'package:jitsi_meet/jitsi_meet.dart' ;
+import 'package:jitsi_meet/jitsi_meet.dart';
 
-
-import 'package:flutter/foundation.dart' ;
-
-
+import 'package:flutter/foundation.dart';
 
 import 'package:jitsi_meet/room_name_constraint.dart';
 import 'package:jitsi_meet/room_name_constraint_type.dart';
@@ -147,7 +144,7 @@ class _MyAppState extends State<MyApp> {
                 SizedBox(
                   height: 64.0,
                   width: double.maxFinite,
-                  child: RaisedButton(
+                  child: ElevatedButton(
                     onPressed: () {
                       _joinMeeting();
                     },
@@ -155,7 +152,10 @@ class _MyAppState extends State<MyApp> {
                       "Join Meeting",
                       style: TextStyle(color: Colors.white),
                     ),
-                    color: Colors.blue,
+                    style: ButtonStyle(
+                      backgroundColor:
+                          MaterialStateProperty.all<Color>(Colors.blue),
+                    ),
                   ),
                 ),
                 SizedBox(
@@ -188,14 +188,13 @@ class _MyAppState extends State<MyApp> {
   }
 
   _joinMeeting() async {
-    String? serverUrl =
-        serverText.text?.trim()?.isEmpty ?? false ? null : serverText.text;
+    String? serverUrl = serverText.text.trim().isEmpty ? null : serverText.text;
 
     try {
       // Enable or disable any feature flag here
       // If feature flag are not provided, default values will be used
       // Full list of feature flags (and defaults) available in the README
-      
+
       var featureFlags = {
         FeatureFlagEnum.WELCOME_PAGE_ENABLED: false,
       };
@@ -211,7 +210,7 @@ class _MyAppState extends State<MyApp> {
 
       // Define meetings options here
       var options = JitsiMeetingOptions(room: roomText.text)
-                ..serverURL = serverUrl
+        ..serverURL = serverUrl
         ..subject = subjectText.text
         ..userDisplayName = nameText.text
         ..userEmail = emailText.text
@@ -219,29 +218,28 @@ class _MyAppState extends State<MyApp> {
         ..audioMuted = isAudioMuted
         ..videoMuted = isVideoMuted
         ..featureFlags.addAll(featureFlags);
-        
 
       debugPrint("JitsiMeetingOptions: $options");
       await JitsiMeet.joinMeeting(
-      options,
-      listener: JitsiMeetingListener(
-          onConferenceWillJoin: (message) {
-            debugPrint("${options.room} will join with message: $message");
-          },
-          onConferenceJoined: (message) {
-            debugPrint("${options.room} joined with message: $message");
-          },
-          onConferenceTerminated: (message) {
-            debugPrint("${options.room} terminated with message: $message");
-          },
-          genericListeners: [
-            JitsiGenericListener(
-                eventName: 'readyToClose',
-                callback: (dynamic message) {
-                  debugPrint("readyToClose callback");
-                }),
-          ]),
-    );
+        options,
+        listener: JitsiMeetingListener(
+            onConferenceWillJoin: (message) {
+              debugPrint("${options.room} will join with message: $message");
+            },
+            onConferenceJoined: (message) {
+              debugPrint("${options.room} joined with message: $message");
+            },
+            onConferenceTerminated: (message) {
+              debugPrint("${options.room} terminated with message: $message");
+            },
+            genericListeners: [
+              JitsiGenericListener(
+                  eventName: 'readyToClose',
+                  callback: (dynamic message) {
+                    debugPrint("readyToClose callback");
+                  }),
+            ]),
+      );
     } catch (error) {
       debugPrint("error: $error");
     }
@@ -259,7 +257,7 @@ class _MyAppState extends State<MyApp> {
     }, "Currencies characters aren't allowed in room names."),
   };
 
-    void _onConferenceWillJoin(message) {
+  void _onConferenceWillJoin(message) {
     debugPrint("_onConferenceWillJoin broadcasted with message: $message");
   }
 
